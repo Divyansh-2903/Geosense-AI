@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-on-secondary: #ffffff;
+  --color-on-error-container: #93000a;
+  --color-secondary-fixed: #cff068;
+  --color-on-secondary-fixed: #161e00;
+  --color-primary: #03260e;
+  --color-tertiary-fixed-dim: #a1d494;
+  --color-secondary-fixed-dim: #b3d34f;
+  --color-on-tertiary-fixed-variant: #23501e;
+  --color-surface-tint: #436649;
+  --color-tertiary: #002701;
+  --color-on-primary-fixed: #00210a;
+  --color-primary-fixed-dim: #a9d0ac;
+  --color-on-tertiary-container: #79aa6e;
+  --color-surface-dim: #d9dad9;
+  --color-surface-container: #edeeed;
+  --color-tertiary-container: #103e0e;
+  --color-surface-container-low: #f3f4f3;
+  --color-error-container: #ffdad6;
+  --color-background: #f9f9f8;
+  --color-primary-fixed: #c5edc7;
+  --color-secondary-container: #cff068;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-tertiary: #ffffff;
+  --color-primary-container: #1a3c22;
+  --color-on-secondary-fixed-variant: #3c4d00;
+  --color-tertiary-fixed: #bcf0ae;
+  --color-inverse-primary: #a9d0ac;
+  --color-on-primary-fixed-variant: #2c4e32;
+  --color-surface-container-high: #e7e8e7;
+  --color-on-surface-variant: #424841;
+  --color-on-error: #ffffff;
+  --color-outline: #727971;
+  --color-on-primary: #ffffff;
+  --color-on-surface: #191c1c;
+  --color-inverse-surface: #2e3131;
+  --color-on-tertiary-fixed: #002201;
+  --color-error: #ba1a1a;
+  --color-on-background: #191c1c;
+  --color-on-primary-container: #81a785;
+  --color-surface-bright: #f9f9f8;
+  --color-outline-variant: #c2c8bf;
+  --color-surface: #f9f9f8;
+  --color-surface-variant: #e1e3e2;
+  --color-surface-container-highest: #e1e3e2;
+  --color-on-secondary-container: #566c00;
+  --color-inverse-on-surface: #f0f1f0;
+  --color-secondary: #516600;
+
+  --font-body-md: "Hanken Grotesk", sans-serif;
+  --font-headline-sm: "Plus Jakarta Sans", sans-serif;
+  --font-headline-md: "Plus Jakarta Sans", sans-serif;
+  --font-body-lg: "Hanken Grotesk", sans-serif;
+  --font-label-md: "Hanken Grotesk", sans-serif;
+  --font-display-lg: "Plus Jakarta Sans", sans-serif;
+  --font-display-lg-mobile: "Plus Jakarta Sans", sans-serif;
+
+  --text-body-md: 16px;
+  --text-headline-sm: 24px;
+  --text-headline-md: 32px;
+  --text-body-lg: 18px;
+  --text-label-md: 14px;
+  --text-display-lg: 48px;
+  --text-display-lg-mobile: 32px;
+
+  --spacing-margin-mobile: 20px;
+  --spacing-container-max: 1280px;
+  --spacing-stack-sm: 8px;
+  --spacing-stack-lg: 32px;
+  --spacing-section-padding: 80px;
+  --spacing-margin-desktop: 64px;
+  --spacing-stack-md: 16px;
+  --spacing-gutter: 24px;
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+
+  --background-image-hero-gradient: radial-gradient(circle at center, #1a3c22 0%, #03260e 100%);
+  --background-image-card-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+
+  --shadow-soft-ambient: 0px 4px 20px rgba(0,0,0,0.05);
+  --shadow-glow-lime: 0px 4px 12px rgba(207, 240, 104, 0.3);
+
+  /* Dashboard specific branding colors & font properties */
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-brand-forest: #03260e;
+  --color-brand-moss: #1a3c22;
+  --color-brand-lime: #cff068;
+  --color-brand-lime-text: #566c00;
+  --color-brand-bg: #f9f9f8;
+  --color-brand-gray-light: #edeeed;
+  --color-brand-gray-dark: #424841;
+  --color-brand-error: #ba1a1a;
+  --color-brand-error-bg: #ffdad6;
+
+  /* Obsidian Biophilic Theme Extensions */
+  --color-obsidian: #020703;
+  --color-obsidian-card: rgba(255, 255, 255, 0.03);
+  --color-emerald-glow: #10b981;
+  --color-lime-accent: #cff068;
+  --color-amber-gold: #f59e0b;
+  --color-forest-dark: #041c0b;
+  --color-forest-medium: #0c3817;
+  --color-forest-light: #155e25;
+
+  --shadow-glass-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --shadow-neon-emerald: 0 0 20px rgba(16, 185, 129, 0.2);
+  --shadow-neon-lime: 0 0 20px rgba(207, 240, 104, 0.25);
+}
+
+.bg-grid-pattern {
+  background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 120px 120px;
+}
+
+/* Custom styles for animations & layout styling */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.glow-lime {
+  box-shadow: 0px 4px 15px rgba(207, 240, 104, 0.4);
+}
+
+.map-parcel {
+  transition: all 0.2s ease-in-out;
+}
+.map-parcel:hover {
+  filter: brightness(1.15) saturate(1.1);
+  cursor: pointer;
+}
+
+/* ────────────────────────────────────────────────────────
+   GOOGLE TRANSLATE NATIVE CUSTOM CUSTOMIZATION
+   ──────────────────────────────────────────────────────── */
+/* Hide the Google Translate top banner frame and hover popups */
+iframe.goog-te-banner-frame,
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+/* The new banner class GT uses in 2024+ */
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+/* Injected header bar */
+.skiptranslate > iframe {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* The skiptranslate <font> wrapper should stay inline so content renders */
+.skiptranslate {
+  display: inline !important;
+}
+
+/* Reset body positioning that Google Translate pushes down */
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+/* Hide hover highlights on translated text */
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+.goog-text-highlight:hover {
+  background-color: transparent !important;
+}
+
+font[style*="background-color"] {
+  background-color: transparent !important;
+}
+
+/* Custom scrollbar utility for language picker */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Glassmorphism & Neon Glow Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+}
+
+.glow-text-emerald {
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.glow-text-lime {
+  text-shadow: 0 0 15px rgba(207, 240, 104, 0.5);
+}
+
+.neon-border-lime {
+  transition: all 0.3s ease;
+}
+
+.neon-border-lime:hover {
+  border-color: #cff068;
+  box-shadow: 0 0 25px rgba(207, 240, 104, 0.35);
+}
+
+
+

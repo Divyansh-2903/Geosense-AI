@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Custom branding colors */
+  --color-brand-forest: #03260e;
+  --color-brand-moss: #1a3c22;
+  --color-brand-lime: #cff068;
+  --color-brand-lime-text: #566c00;
+  --color-brand-bg: #f9f9f8;
+  --color-brand-gray-light: #edeeed;
+  --color-brand-gray-dark: #424841;
+  --color-brand-error: #ba1a1a;
+  --color-brand-error-bg: #ffdad6;
+}
+
+/* Custom styles for animations & layout styling */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.glow-lime {
+  box-shadow: 0px 4px 15px rgba(207, 240, 104, 0.4);
+}
+
+.map-parcel {
+  transition: all 0.2s ease-in-out;
+}
+.map-parcel:hover {
+  filter: brightness(1.15) saturate(1.1);
+  cursor: pointer;
+}

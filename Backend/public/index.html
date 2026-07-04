@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agri-Sense - Precision Farm Analytics & AI Advisor</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Leaflet Draw CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+  <!-- Main App Wrapper -->
+  <div class="app-container">
+    
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="header-logo">
+        <i class="fa-solid fa-leaf logo-icon"></i>
+        <h1>Agri-Sense</h1>
+        <span class="logo-badge">PRO</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-print" class="btn btn-secondary">
+          <i class="fa-solid fa-file-pdf"></i> Export Report
+        </button>
+        <span class="status-indicator-wrapper">
+          <span class="status-dot pulsing-green"></span>
+          <span class="status-text">Earth Engine Online</span>
+        </span>
+      </div>
+    </header>
+    
+    <!-- Dashboard Workspace -->
+    <main class="app-workspace">
+      
+      <!-- Left Panel: Interactive Map and Query Controls -->
+      <section class="panel-left">
+        <div class="card map-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-map-location-dot"></i> Farm Boundary Setup</h2>
+          </div>
+          
+          <div id="map" class="map-container"></div>
+          
+          <div class="map-footer-info">
+            <span id="coords-display"><i class="fa-solid fa-circle-info"></i> Use the drawing tools to define your farm polygon.</span>
+          </div>
+        </div>
+        
+        <!-- Controls Card -->
+        <div class="card controls-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-sliders"></i> Analysis Parameters</h2>
+          </div>
+          <div class="card-body form-grid">
+            <div class="form-group">
+              <label for="crop-selector">Target Crop</label>
+              <select id="crop-selector" class="form-select">
+                <option value="Auto">Auto-Detect Crop</option>
+                <option value="Rice">Rice</option>
+                <option value="Wheat">Wheat</option>
+                <option value="Mustard">Mustard</option>
+                <option value="Bajra">Bajra</option>
+                <option value="Cotton">Cotton</option>
+                <option value="Soybean">Soybean</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="area-input">Manual Area Override (ha)</label>
+              <input type="number" id="area-input" class="form-input" placeholder="Auto-calculated if blank" min="0.1" step="0.1">
+            </div>
+            
+            <div class="form-group">
+              <label for="year-selector">Sensing Year</label>
+              <select id="year-selector" class="form-select">
+                <option value="2025" selected>2025 (Standard)</option>
+                <option value="2024">2024 (Historical)</option>
+              </select>
+            </div>
+            
+            <button id="btn-analyze" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Run Farm Analysis
+            </button>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Right Panel: Analytics Results (Initially hidden or shows empty state) -->
+      <section class="panel-right">
+        
+        <!-- Empty State -->
+        <div id="dashboard-empty-state" class="empty-state">
+          <div class="empty-icon-wrapper">
+            <i class="fa-solid fa-satellite-dish"></i>
+          </div>
+          <h3>Awaiting Farm Selection</h3>
+          <p>Please define your farm boundary on the map and click "Run Farm Analysis" to view remote sensing indexes, yields, and AI recommendations.</p>
+        </div>
+        
+        <!-- Loading State -->
+        <div id="dashboard-loading-state" class="loading-state hidden">
+          <div class="spinner"></div>
+          <h3>Processing Satellite Imagery</h3>
+          <p id="loading-step-text">Querying Sentinel-2 & meteorological databases...</p>
+        </div>
+        
+        <!-- Actual Dashboard Content -->
+        <div id="dashboard-content" class="dashboard-content-wrapper hidden">
+          
+          <!-- Quick Status Strip -->
+          <div class="quick-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Identified Crop</span>
+              <span id="stat-crop" class="stat-value text-green">-</span>
+              <span id="crop-detection-badge" class="stat-sub">Manual Selected</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Measured Area</span>
+              <span id="stat-area" class="stat-value">-</span>
+              <span class="stat-sub">Hectares (derived)</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Estimated Yield</span>
+              <span id="stat-yield" class="stat-value text-blue">-</span>
+              <span class="stat-sub">Tons per hectare</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Expected Revenue</span>
+              <span id="stat-revenue" class="stat-value text-yellow">-</span>
+              <span id="stat-revenue-detail" class="stat-sub">Based on market price</span>
+            </div>
+          </div>
+          
+          <!-- Key Indicators Rows -->
+          <div class="results-grid">
+            
+            <!-- Health & Moisture Gauges -->
+            <div class="card result-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-heart-pulse"></i> Vegetation Indices</h3>
+              </div>
+              <div class="card-body gauges-row">
+                <!-- Crop Health Score -->
+                <div class="gauge-container">
+                  <svg class="circular-gauge" viewBox="0 0 100 100">
+                    <circle class="gauge-bg" cx="50" cy="50" r="40" />
+                    <circle id="gauge-health-fill" class="gauge-fill health-color" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+                  </svg>
+                  <div class="gauge-text">
+                    <span id="gauge-health-value" class="gauge-number">0</span>
+                    <span class="gauge-unit">Health Score</span>
+                  </div>
+                  <span id="health-status-badge" class="badge badge-success">Healthy</span>
+                </div>
+                
+                <!-- NDVI / NDWI Details -->
+                <div class="gauge-details">
+                  <div class="index-row">
+                    <div class="index-meta">
+                      <span class="index-name">NDVI (Chlorophyll)</span>
+                      <span id="val-ndvi" class="index-val">0.00</span>
+                    </div>
+                    <div class="index-bar-wrapper">
+                      <div id="bar-ndvi" class="index-bar bg-green" style="width: 0%"></div>
+                    </div>
+                  </div>
+                  <div class="index-row">
+                    <div class="index-meta">
+                      <span class="index-name">NDWI (Water Content)</span>
+                      <span id="val-ndwi" class="index-val">0.00</span>
+                    </div>
+                    <div class="index-bar-wrapper">
+                      <div id="bar-ndwi" class="index-bar bg-blue" style="width: 0%"></div>
+                    </div>
+                  </div>
+                  <div class="index-row">
+                    <div class="index-meta">
+                      <span class="index-name">Moisture Stress</span>
+                      <span id="val-stress" class="index-val">-</span>
+                    </div>
+                    <div class="index-bar-wrapper">
+                      <div id="bar-stress" class="index-bar bg-yellow" style="width: 0%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Growth Stage Card -->
+            <div class="card result-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-timeline"></i> Crop Growth Stage</h3>
+              </div>
+              <div class="card-body">
+                <div class="timeline-wrapper">
+                  <div class="timeline-line"></div>
+                  <div class="timeline-stages">
+                    <div class="stage-item" id="stage-soil">
+                      <div class="stage-dot"></div>
+                      <span class="stage-label">Bare Soil</span>
+                    </div>
+                    <div class="stage-item" id="stage-seedling">
+                      <div class="stage-dot"></div>
+                      <span class="stage-label">Seedling</span>
+                    </div>
+                    <div class="stage-item" id="stage-vegetative">
+                      <div class="stage-dot"></div>
+                      <span class="stage-label">Vegetative</span>
+                    </div>
+                    <div class="stage-item" id="stage-flowering">
+                      <div class="stage-dot"></div>
+                      <span class="stage-label">Flowering</span>
+                    </div>
+                    <div class="stage-item" id="stage-maturity">
+                      <div class="stage-dot"></div>
+                      <span class="stage-label">Maturity</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="stage-status-desc">
+                  <p><i class="fa-solid fa-calendar-check"></i> Currently in <strong id="current-stage-text">-</strong> stage.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Recommendations & Advisor Section -->
+          <div class="results-grid">
+            
+            <!-- Advisory Cards -->
+            <div class="card result-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-prescription-bottle-medical"></i> Recommendations</h3>
+              </div>
+              <div class="card-body recommendation-body">
+                <div class="rec-item">
+                  <div class="rec-icon text-blue"><i class="fa-solid fa-droplet"></i></div>
+                  <div class="rec-info">
+                    <h4>Irrigation Advisor</h4>
+                    <p id="rec-irrigation-text">-</p>
+                    <span id="rec-irrigation-priority" class="badge">Low Priority</span>
+                  </div>
+                </div>
+                
+                <div class="rec-item">
+                  <div class="rec-icon text-green"><i class="fa-solid fa-flask"></i></div>
+                  <div class="rec-info">
+                    <h4>Fertilizer Recommendation</h4>
+                    <p id="rec-fertilizer-text">-</p>
+                  </div>
+                </div>
+                
+                <div class="rec-item">
+                  <div class="rec-icon text-red"><i class="fa-solid fa-bug"></i></div>
+                  <div class="rec-info">
+                    <h4>Disease & Risk Assessment</h4>
+                    <p id="rec-disease-text">-</p>
+                    <span id="rec-disease-level" class="badge">No Major Risk</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Meteorological stats -->
+            <div class="card result-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-cloud-sun"></i> Meteorological Indicators</h3>
+              </div>
+              <div class="card-body weather-stats-body">
+                <div class="weather-row">
+                  <div class="weather-col">
+                    <span class="weather-icon"><i class="fa-solid fa-cloud-showers-water"></i></span>
+                    <div class="weather-meta">
+                      <span class="weather-val" id="weather-rainfall">- mm</span>
+                      <span class="weather-label">Annual Rainfall</span>
+                    </div>
+                  </div>
+                  <div class="weather-col">
+                    <span class="weather-icon"><i class="fa-solid fa-temperature-half"></i></span>
+                    <div class="weather-meta">
+                      <span class="weather-val" id="weather-temp">- °C</span>
+                      <span class="weather-label">Mean Temperature</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Textual summary -->
+                <div class="weather-summary-text">
+                  <p><i class="fa-solid fa-circle-question"></i> Evapotranspiration balances are evaluated using ERA5-Land daily aggregation datasets.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Charts Section -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-chart-line"></i> Spectral Progression History (Monthly Trend)</h2>
+            </div>
+            <div class="card-body chart-row">
+              <div class="chart-canvas-container">
+                <canvas id="trendChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Gemini AI Advisor Panel -->
+          <div class="card ai-card">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-sparkles text-sparkle"></i> Agri-Sense AI Advisor (Powered by Gemini)</h2>
+              <span class="ai-status">Active</span>
+            </div>
+            <div class="card-body ai-body">
+              
+              <!-- Report Text -->
+              <div class="ai-report-box" id="ai-report-text">
+                <p>Generating reports...</p>
+              </div>
+              
+              <hr class="ai-divider">
+              
+              <!-- Chat Session Area -->
+              <div class="chat-section">
+                <h3><i class="fa-solid fa-comments"></i> Ask follow-up questions about this analysis</h3>
+                
+                <div id="chat-messages" class="chat-messages-container">
+                  <div class="chat-msg system-msg">
+                    <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                    <div class="msg-content">
+                      <p>Hello! I have reviewed your farm's spectral data. Ask me anything about yield improvement, soil condition, or irrigation plans for this plot.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="chat-input-area">
+                  <input type="text" id="chat-input" class="chat-input-field" placeholder="Ask Agri-Sense AI... (e.g. How can I lower disease risk?)">
+                  <button id="btn-chat-send" class="btn btn-primary btn-icon">
+                    <i class="fa-solid fa-paper-plane"></i>
+                  </button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+          
+        </div>
+      </section>
+      
+    </main>
+  </div>
+  
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Leaflet Draw JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Custom JS Modules -->
+  <script src="js/charts.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

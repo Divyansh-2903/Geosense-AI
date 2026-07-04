@@ -1,0 +1,15 @@
+node_modules/
+.env*
+!.env.example
+*.log
+earth-engine-key.json
+Backend/earth-engine-key.json
+dist/
+build/
+.agent/
+.agents/
+.gemini/
+/*.png
+/*.webp
+/*.jpg
+/*.jpeg

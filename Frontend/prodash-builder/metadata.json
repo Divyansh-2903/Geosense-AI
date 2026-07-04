@@ -1,0 +1,6 @@
+{
+  "name": "GeoHarvest",
+  "description": "Satellite-and-weather-powered precision agriculture hub with field health analysis, spatial crop classification, moisture stress mapping, and intelligent irrigation advisories.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
