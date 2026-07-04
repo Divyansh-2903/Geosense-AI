@@ -12,11 +12,4 @@ const protect = require('../middleware/auth');
 
 router.use(protect); // Protect all farm routes
 
-router.post('/', createFarm);
-router.get('/', getFarms);
-router.get('/:id/history', getFarmHistory);
-router.get('/:id', getFarmById);
-router.delete('/:id', deleteFarm);
-router.post('/:id/analysis', saveAnalysisToFarm);
-
 module.exports = router;
