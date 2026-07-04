@@ -73,7 +73,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/farms', farmRoutes);
 
 // Catch-all route to serve Frontend/dist/index.html for any other non-API requests (client-side routing)
-app.get('*', (req, res) => {
+app.get('*any', (req, res) => {
   const indexPath = path.join(__dirname, '../Frontend/dist/index.html');
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
